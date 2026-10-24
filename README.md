@@ -15,6 +15,7 @@ I'm a high school student studying electronics and physics. I build small, usefu
 | [**Cutcast**](https://github.com/BoazCohenJ/Cutcast) | Automatic multicam podcast editor for Windows. Syncs cameras and mics by audio and cuts to whoever is talking. |
 | [**OutageLog**](https://github.com/BoazCohenJ/OutageLog) | Logs internet outages on Windows and reports whether each one was on your side or your provider's. · [site](https://boazcohenj.github.io/OutageLog/) |
 | [**gmail-to-contacts**](https://github.com/BoazCohenJ/gmail-to-contacts) | Watches Gmail for emails matching your rules and saves the names and phone numbers as Google Contacts. |
+| [**ServerMon**](https://github.com/BoazCohenJ/servermon) | Phone app and Docker container for checking home server health: SMART disk health, system stats, services and containers, with push alerts. |
 | [**ESP32_OLED_Drawing**](https://github.com/BoazCohenJ/ESP32_OLED_Drawing) | Drawing on an OLED screen driven by an ESP32. |
 
 #### 🧰 What I use

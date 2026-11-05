@@ -1,24 +1,13 @@
-### Hi, I'm Boaz 👋
-
-I'm a high school student studying electronics and physics. I build small, useful tools for Windows and Android, and tinker with microcontrollers on the side.
-
-🌐 **Portfolio:** [boazcohen.dev](https://boazcohen.dev)
-
----
-
-#### 🛠️ Projects
-
-| Project | What it does |
-|---|---|
-| [**NoFocusSteal**](https://github.com/BoazCohenJ/NoFocusSteal) | Stops apps from stealing focus on Windows and shows which app keeps doing it. Tiny tray app, no install. · [site](https://boazcohenj.github.io/NoFocusSteal/) |
-| [**OpenCal**](https://github.com/BoazCohenJ/OpenCal) | A calm, local-first calendar app for Android, built with Expo. Schedule, day, week and month views, quiet time and dark mode. |
-| [**Cutcast**](https://github.com/BoazCohenJ/Cutcast) | Automatic multicam podcast editor for Windows. Syncs cameras and mics by audio and cuts to whoever is talking. |
-| [**OutageLog**](https://github.com/BoazCohenJ/OutageLog) | Logs internet outages on Windows and reports whether each one was on your side or your provider's. · [site](https://boazcohenj.github.io/OutageLog/) |
-| [**gmail-to-contacts**](https://github.com/BoazCohenJ/gmail-to-contacts) | Watches Gmail for emails matching your rules and saves the names and phone numbers as Google Contacts. |
-| [**ServerMon**](https://github.com/BoazCohenJ/servermon) | Phone app and Docker container for checking home server health: SMART disk health, system stats, services and containers, with push alerts. |
-| [**LoudLock**](https://github.com/BoazCohenJ/LoudLock) | Stops Windows volume from jumping to 100%. Undoes jumps you didn't make, caps each device, locks your mic and keeps per-app volumes. Tiny tray app, no install. · [site](https://boazcohenj.github.io/LoudLock/) |
-| [**ESP32_OLED_Drawing**](https://github.com/BoazCohenJ/ESP32_OLED_Drawing) | Drawing on an OLED screen driven by an ESP32. |
-
-#### 🧰 What I use
-
-`C#` · `TypeScript` · `React Native / Expo` · `Python` · `JavaScript` · `ESP32 / Arduino` · `Docker`
+<p>
+<img src="./assets/top.svg" alt="Hi, I'm Boaz. High school student, electronics and physics. I study electronics and physics. I build small, useful tools for Windows and Android, run my own tools at home, and tinker with microcontrollers on the side." width="100%" align="top">
+<a href="https://boazcohen.dev"><img src="./assets/portfolio.svg" alt="Portfolio: boazcohen.dev" width="100%" align="top"></a>
+<img src="./assets/mid.svg" alt="1 Features: Windows tools, Android apps, firmware, self-hosting, and physics and math. 2 Block diagram: physics, math and electronics go into Boaz, and come out as Windows tools, Android apps, firmware and self-hosting. 3 Pin configuration: languages C#, TypeScript, JavaScript, Python, React Native and Arduino C++ on the left, targets Windows, Android, web, ESP32, Linux and Docker on the right. 4 Applications:" width="100%" align="top">
+<a href="https://github.com/BoazCohenJ/NoFocusSteal"><img src="./assets/card-nofocussteal.svg" alt="NoFocusSteal: Stops apps from stealing focus and shows which app keeps doing it. Tiny tray app, no install." width="49.9%" align="top"></a><a href="https://github.com/BoazCohenJ/LoudLock"><img src="./assets/card-loudlock.svg" alt="LoudLock: Stops volume jumping to 100%. Undoes jumps you didn't make, caps each device, locks your mic." width="49.9%" align="top"></a>
+<a href="https://github.com/BoazCohenJ/OutageLog"><img src="./assets/card-outagelog.svg" alt="OutageLog: Logs internet outages and tells you whether each one was on your side or your provider's." width="49.9%" align="top"></a><a href="https://github.com/BoazCohenJ/Cutcast"><img src="./assets/card-cutcast.svg" alt="Cutcast: Automatic multicam podcast editor. Syncs cameras and mics by audio and cuts to whoever is talking." width="49.9%" align="top"></a>
+<a href="https://github.com/BoazCohenJ/OpenCal"><img src="./assets/card-opencal.svg" alt="OpenCal: A calm, local-first calendar. Schedule, day, week and month views, quiet time and dark mode." width="49.9%" align="top"></a><a href="https://github.com/BoazCohenJ/servermon"><img src="./assets/card-servermon.svg" alt="ServerMon: Phone app + Docker container for home server health: SMART, system stats, containers, push alerts." width="49.9%" align="top"></a>
+<a href="https://github.com/BoazCohenJ/gmail-to-contacts"><img src="./assets/card-gmail.svg" alt="gmail-to-contacts: Watches Gmail for emails matching your rules and saves names and numbers as Google Contacts." width="49.9%" align="top"></a><a href="https://github.com/BoazCohenJ/ESP32_OLED_Drawing"><img src="./assets/card-esp32.svg" alt="ESP32_OLED_Drawing: Drawing on an OLED screen driven by an ESP32." width="49.9%" align="top"></a>
+<a href="https://boazcohenj.github.io/NoFocusSteal/"><img src="./assets/live-1.svg" alt="NoFocusSteal live page" width="33.3%" align="top"></a><a href="https://boazcohenj.github.io/LoudLock/"><img src="./assets/live-2.svg" alt="LoudLock live page" width="33.3%" align="top"></a><a href="https://boazcohenj.github.io/OutageLog/"><img src="./assets/live-3.svg" alt="OutageLog live page" width="33.3%" align="top"></a>
+<!-- REPOS:START -->
+<!-- REPOS:END -->
+<img src="./assets/bottom.svg" alt="5 Lab notes: an oscilloscope, a worked RC filter example, and electronics, physics and math formulas. End of datasheet." width="100%" align="top">
+</p>

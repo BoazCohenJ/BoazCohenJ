@@ -9,5 +9,5 @@
 <a href="https://boazcohenj.github.io/NoFocusSteal/"><img src="./assets/live-1.svg" alt="NoFocusSteal live page" width="33.3%" align="top"></a><a href="https://boazcohenj.github.io/LoudLock/"><img src="./assets/live-2.svg" alt="LoudLock live page" width="33.3%" align="top"></a><a href="https://boazcohenj.github.io/OutageLog/"><img src="./assets/live-3.svg" alt="OutageLog live page" width="33.3%" align="top"></a>
 <!-- REPOS:START -->
 <!-- REPOS:END -->
-<img src="./assets/bottom.svg" alt="5 Lab notes: an oscilloscope, a worked RC filter example, and electronics, physics and math formulas. End of datasheet." width="100%" align="top">
+<img src="./assets/bottom.svg" alt="End of datasheet." width="100%" align="top">
 </p>

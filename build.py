@@ -7,7 +7,7 @@ sides, and traces that run from section to section.
 
 Public content: keep self-hosting generic (no service names, hardware, hosts or IPs).
 
-The two featured chips (section 3) are filled from GitHub on every run: repo name, about text,
+The two featured chips are filled from GitHub on every run: repo name, about text,
 stars and commit count. A scheduled GitHub Action (.github/workflows/update-profile.yml) re-runs this
 script and commits the result when something changed.
 
@@ -227,19 +227,17 @@ def connector():
 
 
 # --------------------------------------------------------------------------- section heads (silkscreen label + trace to the rails)
-def head(ref, title, sub):
+def head(title, sub):
     b = []
-    tx = 80
-    ex = tx + len(title) * 16.4 + 12
+    tx = 44
+    ex = tx + len(title) * 16.4 + 16
     b.append(f'<rect x="26" y="10" width="{ex - 26:.0f}" height="44" rx="4" fill="none" stroke="{SILK}" stroke-opacity=".45" stroke-width="1.5"/>')
-    b.append(f'<rect x="34" y="16" width="32" height="32" rx="4" fill="{COPPER}"/>')
-    b.append(f'<text x="50" y="37" text-anchor="middle" font-family="{MONO}" font-size="14" font-weight="700" fill="#06160f">{ref}</text>')
     b.append(f'<text x="{tx}" y="41" font-family="{MONO}" font-size="24" font-weight="700" letter-spacing="2" fill="{SILK}">{esc(title)}</text>')
     sx0 = ex + 14
     b.append(f'<text x="{sx0:.0f}" y="40" font-family="{MONO}" font-size="14" fill="{DIM}">{esc(sub)}</text>')
     sx = min(sx0 + len(sub) * 8.4 + 14, 770)
     d1 = f"M{sx:.0f},32 H850 l14,14 H890"
-    d0 = "M10,32 H34"
+    d0 = "M10,32 H26"
     b.append(trace(d0))
     b.append(trace(d1))
     b.append(pad(10, 32, 4))
@@ -248,60 +246,11 @@ def head(ref, title, sub):
     return "".join(b)
 
 
-def section_body(ref, title, sub, body):
-    return head(ref, title, sub) + f'<g transform="translate(0 60)">{body}</g>'
+def section_body(title, sub, body):
+    return head(title, sub) + f'<g transform="translate(0 60)">{body}</g>'
 
 
-# --------------------------------------------------------------------------- 1 block diagram
-def box(x, y, w, h, title, sub, ref, n):
-    return (f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="6" fill="{CHIP}" stroke="{CHIP_EDGE}" stroke-width="2"/>'
-            f'<text x="{x + 10}" y="{y + 13}" font-family="{MONO}" font-size="9.5" fill="{COPPER}">{ref}</text>'
-            f'<text x="{x + 12}" y="{y + h - 12}" font-family="{SANS}" font-size="15" font-weight="700" fill="{SILK}">{esc(title)}</text>'
-            f'<text x="{x + w - 10}" y="{y + 13}" text-anchor="end" font-family="{MONO}" font-size="10" fill="{DIM}">{esc(sub)}</text>'
-            + led(x + w - 12, y + h - 12, CYAN if n % 2 else "#fbbf24", (n * 0.37) % 1.5, 1.2 + (n % 3) * 0.3, 3))
-
-
-def block_body():
-    b = []
-    ins = [("PHYSICS", "F = m·a"), ("MATH", "∫ f(x) dx"), ("ELECTRONICS", "V = I·R")]
-    outs = [("WINDOWS TOOLS", "C# · .NET"), ("ANDROID APPS", "React Native"),
-            ("FIRMWARE", "ESP32 · Arduino"), ("SELF-HOSTING", "Docker")]
-    in_y = [38, 102, 166]
-    out_y = [30, 78, 126, 174]
-    cx0, cx1 = 330, 570
-    for i, y in enumerate(in_y):
-        d = f"M200,{y} H{cx0 - 6}"
-        b.append(trace(d, 3))
-        b.append(pulse(d, 2.4, 0.4 * i))
-        b.append(pad(200, y, 4.5))
-    for i, y in enumerate(out_y):
-        d = f"M{cx1 + 6},{y} H690"
-        b.append(trace(d, 3))
-        b.append(pulse(d, 2.4, 0.3 * i + 0.6))
-        b.append(pad(690, y, 4.5))
-    for y in in_y:
-        b.append(f'<rect x="{cx0 - 12}" y="{y - 3}" width="12" height="6" fill="{COPPER}"/>')
-    for y in out_y:
-        b.append(f'<rect x="{cx1}" y="{y - 3}" width="12" height="6" fill="{COPPER}"/>')
-    b.append(f'<rect x="{cx0}" y="8" width="{cx1 - cx0}" height="188" rx="8" fill="#0f1317" stroke="#2c363d" stroke-width="2"/>')
-    b.append(f'<circle cx="{cx0 + 16}" cy="24" r="3.5" fill="#3a444c"/>')
-    mid = (cx0 + cx1) // 2
-    b.append(f'<text x="{mid}" y="108" text-anchor="middle" font-family="{SANS}" font-size="44" font-weight="700" fill="{SILK}">BOAZ</text>')
-    b.append(f'<text x="{mid}" y="130" text-anchor="middle" font-family="{MONO}" font-size="13" fill="{DIM}">BC-2026 · CORE</text>')
-    b.append(f'<text x="{mid}" y="148" text-anchor="middle" font-family="{MONO}" font-size="10" fill="{DIM}">curiosity in, working things out</text>')
-    b.append(led(cx1 - 18, 24, CYAN, 0.2, 1.1, 4))
-    for i, (t, sub) in enumerate(ins):
-        b.append(box(34, in_y[i] - 22, 166, 44, t, sub, f"IN{i + 1}", i))
-    for i, (t, sub) in enumerate(outs):
-        b.append(box(690, out_y[i] - 21, 176, 42, t, sub, f"OUT{i + 1}", i + 3))
-    b.append(f'<text x="34" y="216" font-family="{MONO}" font-size="10" fill="{SILK}" opacity=".55">FIG. 1 · SIGNAL FLOW</text>')
-    return "".join(b)
-
-
-BLOCK_ALT = "Block diagram: physics, math and electronics go into Boaz, and come out as Windows tools, Android apps, firmware and self-hosting."
-
-
-# --------------------------------------------------------------------------- 2 pin configuration
+# --------------------------------------------------------------------------- pin configuration
 def pinout_body():
     b = []
     left = [("C#", ".NET desktop"), ("TypeScript", "apps & web"), ("JavaScript", "web")]
@@ -331,14 +280,14 @@ def pinout_body():
         b.append(f'<rect x="564" y="{y - 13}" width="230" height="26" rx="6" fill="{CHIP}" stroke="{CHIP_EDGE}" stroke-width="2"/>'
                  f'<text x="578" y="{y + 5}" font-family="{SANS}" font-size="14" font-weight="700" fill="{SILK}">{esc(n)}</text>'
                  f'<text x="782" y="{y + 4}" text-anchor="end" font-family="{MONO}" font-size="10" fill="{DIM}">{esc(sub)}</text>')
-    b.append(f'<text x="106" y="{ys[-1] + 42}" font-family="{MONO}" font-size="10" fill="{SILK}" opacity=".55">FIG. 2 · PIN CONFIGURATION · DIP-6 · LANGUAGES</text>')
+    b.append(f'<text x="106" y="{ys[-1] + 42}" font-family="{MONO}" font-size="10" fill="{SILK}" opacity=".55">PACKAGE: DIP-6 · PIN 1 TOP LEFT</text>')
     return "".join(b)
 
 
 PINOUT_ALT = "Pin configuration: the languages I write, C#, TypeScript, JavaScript, Python, React Native and Arduino C++."
 
 
-# --------------------------------------------------------------------------- 3 featured: two chips, filled from GitHub
+# --------------------------------------------------------------------------- featured: two chips, filled from GitHub
 # (slug, repo, role label, stat, unit, display colour).
 # Name, about and the numbers are read from GitHub on every build; only the repos are pinned here.
 FEATURED = [
@@ -532,7 +481,7 @@ def footer_body():
     b.append(pad(834, 40, 4))
     b.append(pulse(d1, 3, 0.2, 2.5))
     b.append(pulse("M834,40 H680", 3.4, 1.0, 2.5))
-    b.append(f'<text x="450" y="45" text-anchor="middle" font-family="{MONO}" font-size="13" letter-spacing="2" fill="{DIM}">END OF DATASHEET · BC-2026 · PIN 13: NC</text>')
+    b.append(f'<text x="450" y="45" text-anchor="middle" font-family="{MONO}" font-size="13" letter-spacing="2" fill="{DIM}">END OF DATASHEET · BC-2026 · PIN 7: NC</text>')
     b.append(f'<text x="450" y="64" text-anchor="middle" font-family="{MONO}" font-size="9" letter-spacing="1.5" fill="{SILK}" opacity=".45">FAB: HAND-ROUTED · FINISH: ENIG · 1.6 MM</text>')
     return "".join(b)
 
@@ -545,15 +494,14 @@ for old in os.listdir(OUT):
 
 # Non-clickable parts are merged into a few tall slices so there are fewer seams.
 TOP_ALT = "Hi, I'm Boaz. High school student, electronics and physics."
-MID_ALT = "1 " + BLOCK_ALT + " 2 " + PINOUT_ALT + " 3 Featured:"
+MID_ALT = PINOUT_ALT + " Featured projects:"
 BOTTOM_ALT = "End of datasheet."
 
 save("top.svg", svg(W, 340, header_body(), TOP_ALT, "top"))
 save("portfolio.svg", connector())
-mid = (section_body("1", "BLOCK DIAGRAM", "// signal flow", block_body())
-       + f'<g transform="translate(0 306)">{section_body("2", "PIN CONFIGURATION", "// what I write", pinout_body())}</g>'
-       + f'<g transform="translate(0 530)">{head("3", "FEATURED", "// live from GitHub")}</g>')
-save("mid.svg", svg(W, 600, mid, MID_ALT))
+mid = (section_body("PIN CONFIGURATION", "// what I write", pinout_body())
+       + f'<g transform="translate(0 226)">{head("FEATURED", "// live from GitHub")}</g>')
+save("mid.svg", svg(W, 300, mid, MID_ALT))
 save("bottom.svg", svg(W, 80, footer_body(), BOTTOM_ALT, "bottom"))
 chips = []
 for i, feat in enumerate(featured):

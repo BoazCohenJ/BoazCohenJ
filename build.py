@@ -7,7 +7,7 @@ sides, and traces that run from section to section.
 
 Public content: keep self-hosting generic (no service names, hardware, hosts or IPs).
 
-The two featured chips (section 4) are filled from GitHub on every run: repo name, about text,
+The two featured chips (section 3) are filled from GitHub on every run: repo name, about text,
 stars and commit count. A scheduled GitHub Action (.github/workflows/update-profile.yml) re-runs this
 script and commits the result when something changed.
 
@@ -208,21 +208,7 @@ def header_body():
     return "".join(b)
 
 
-# --------------------------------------------------------------------------- intro note + portfolio connector
-INTRO = ("I study electronics and physics. I build small, useful tools for Windows and Android, "
-         "run my own tools at home, and tinker with microcontrollers on the side.")
-
-
-def intro_body():
-    b = []
-    for k, line in enumerate(textwrap.wrap(INTRO, 84)):
-        b.append(f'<text x="44" y="{44 + k * 26}" font-family="{SANS}" font-size="16.5" fill="{SILK}">{esc(line)}</text>')
-    b.append(f'<text x="44" y="22" font-family="{MONO}" font-size="10" letter-spacing="1.5" fill="{COPPER}">NOTE 1</text>')
-    b.append(trace("M10,16 H30", 3))
-    b.append(pad(30, 16, 3.5))
-    return "".join(b)
-
-
+# --------------------------------------------------------------------------- portfolio connector
 def connector():
     b = []
     b.append(trace("M10,40 H40"))
@@ -266,32 +252,7 @@ def section_body(ref, title, sub, body):
     return head(ref, title, sub) + f'<g transform="translate(0 60)">{body}</g>'
 
 
-# --------------------------------------------------------------------------- 1 features
-FEATURES = [
-    ("Windows tools", " that stay out of the way: small, no install, one job each"),
-    ("Android apps", " that are calm and local-first"),
-    ("Firmware", " on ESP32 and other microcontrollers, with OLEDs and an oscilloscope nearby"),
-    ("Self-hosting", " in containers: my own tools, running at home"),
-    ("Physics and math", " as the debugging tool for everything above"),
-]
-
-
-def features_body():
-    b = []
-    for i, (bold, rest) in enumerate(FEATURES):
-        y = 14 + 28 * i
-        d = f"M10,{y} H48"
-        b.append(trace(d, 3))
-        b.append(pad(10, y, 4))
-        b.append(pad(48, y, 5))
-        b.append(pulse(d, 2.2, 0.35 * i, 2.5))
-        b.append(f'<text x="66" y="{y + 6}" font-family="{SANS}" font-size="16.5">'
-                 f'<tspan font-weight="700" fill="{SILK}">{esc(bold)}</tspan>'
-                 f'<tspan fill="#b4d4c7">{esc(rest)}</tspan></text>')
-    return "".join(b)
-
-
-# --------------------------------------------------------------------------- 2 block diagram
+# --------------------------------------------------------------------------- 1 block diagram
 def box(x, y, w, h, title, sub, ref, n):
     return (f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="6" fill="{CHIP}" stroke="{CHIP_EDGE}" stroke-width="2"/>'
             f'<text x="{x + 10}" y="{y + 13}" font-family="{MONO}" font-size="9.5" fill="{COPPER}">{ref}</text>'
@@ -340,27 +301,26 @@ def block_body():
 BLOCK_ALT = "Block diagram: physics, math and electronics go into Boaz, and come out as Windows tools, Android apps, firmware and self-hosting."
 
 
-# --------------------------------------------------------------------------- 3 pin configuration
+# --------------------------------------------------------------------------- 2 pin configuration
 def pinout_body():
     b = []
-    left = [("C#", ".NET desktop"), ("TypeScript", "apps & web"), ("JavaScript", "web"),
-            ("Python", "scripts"), ("React Native", "Expo · mobile"), ("Arduino C++", "firmware")]
-    right = [("WINDOWS", "tray tools"), ("ANDROID", "phone apps"), ("WEB", "static sites"),
-             ("ESP32", "microcontroller"), ("LINUX", "self-hosting"), ("DOCKER", "containers")]
-    ys = [28 + 34 * i for i in range(6)]
+    left = [("C#", ".NET desktop"), ("TypeScript", "apps & web"), ("JavaScript", "web")]
+    right = [("Python", "scripts"), ("React Native", "Expo · mobile"), ("Arduino C++", "firmware")]
+    ys = [28 + 34 * i for i in range(3)]
     bx0, bx1 = 370, 530
+    mid_y = (6 + ys[-1] + 22) // 2
     b.append(f'<rect x="{bx0}" y="6" width="{bx1 - bx0}" height="{ys[-1] + 22 - 6}" rx="8" fill="#0f1317" stroke="#2c363d" stroke-width="2"/>')
     b.append(f'<path d="M{(bx0 + bx1) // 2 - 14},6 a14,14 0 0 0 28,0" fill="{BOARD}" stroke="#2c363d" stroke-width="2"/>')
     b.append(f'<circle cx="{bx0 + 16}" cy="{ys[0] - 10}" r="3.5" fill="#3a444c"/>')
-    b.append(f'<text x="438" y="113" text-anchor="middle" transform="rotate(-90 438 113)" font-family="{SANS}" font-size="30" font-weight="700" fill="{SILK}">BC-2026</text>')
-    b.append(f'<text x="466" y="113" text-anchor="middle" transform="rotate(-90 466 113)" font-family="{MONO}" font-size="11" fill="{DIM}">BOAZ COHEN · TOP VIEW</text>')
+    b.append(f'<text x="440" y="{mid_y + 4}" text-anchor="middle" transform="rotate(-90 440 {mid_y + 4})" font-family="{SANS}" font-size="20" font-weight="700" fill="{SILK}">BC-2026</text>')
+    b.append(f'<text x="466" y="{mid_y}" text-anchor="middle" transform="rotate(-90 466 {mid_y})" font-family="{MONO}" font-size="11" fill="{DIM}">TOP VIEW</text>')
     for i, y in enumerate(ys):
         b.append(trace(f"M336,{y} H{bx0 - 20}", 3))
         b.append(trace(f"M{bx1 + 20},{y} H564", 3))
         b.append(f'<rect x="{bx0 - 20}" y="{y - 5}" width="20" height="10" fill="{COPPER}"/>'
                  f'<rect x="{bx1}" y="{y - 5}" width="20" height="10" fill="{COPPER}"/>')
         b.append(f'<text x="{bx0 + 8}" y="{y + 4}" font-family="{MONO}" font-size="11" fill="{DIM}">{i + 1}</text>')
-        b.append(f'<text x="{bx1 - 8}" y="{y + 4}" text-anchor="end" font-family="{MONO}" font-size="11" fill="{DIM}">{12 - i}</text>')
+        b.append(f'<text x="{bx1 - 8}" y="{y + 4}" text-anchor="end" font-family="{MONO}" font-size="11" fill="{DIM}">{6 - i}</text>')
         b.append(pulse(f"M336,{y} H{bx0}", 1.6, 0.35 * i, 2.5))
         b.append(pulse(f"M{bx1},{y} H564", 1.6, 0.35 * i + 0.9, 2.5))
         n, sub = left[i]
@@ -371,15 +331,14 @@ def pinout_body():
         b.append(f'<rect x="564" y="{y - 13}" width="230" height="26" rx="6" fill="{CHIP}" stroke="{CHIP_EDGE}" stroke-width="2"/>'
                  f'<text x="578" y="{y + 5}" font-family="{SANS}" font-size="14" font-weight="700" fill="{SILK}">{esc(n)}</text>'
                  f'<text x="782" y="{y + 4}" text-anchor="end" font-family="{MONO}" font-size="10" fill="{DIM}">{esc(sub)}</text>')
-    b.append(f'<text x="106" y="242" font-family="{MONO}" font-size="10" fill="{SILK}" opacity=".55">FIG. 2 · PIN CONFIGURATION · LEFT: LANGUAGES (IN) · RIGHT: TARGETS (OUT)</text>')
+    b.append(f'<text x="106" y="{ys[-1] + 42}" font-family="{MONO}" font-size="10" fill="{SILK}" opacity=".55">FIG. 2 · PIN CONFIGURATION · DIP-6 · LANGUAGES</text>')
     return "".join(b)
 
 
-PINOUT_ALT = ("Pin configuration: languages C#, TypeScript, JavaScript, Python, React Native and Arduino C++ on the left, "
-              "targets Windows, Android, web, ESP32, Linux and Docker on the right.")
+PINOUT_ALT = "Pin configuration: the languages I write, C#, TypeScript, JavaScript, Python, React Native and Arduino C++."
 
 
-# --------------------------------------------------------------------------- 4 featured: two chips, filled from GitHub
+# --------------------------------------------------------------------------- 3 featured: two chips, filled from GitHub
 # (slug, repo, role label, stat, unit, display colour).
 # Name, about and the numbers are read from GitHub on every build; only the repos are pinned here.
 FEATURED = [
@@ -585,18 +544,16 @@ for old in os.listdir(OUT):
     os.remove(os.path.join(OUT, old))
 
 # Non-clickable parts are merged into a few tall slices so there are fewer seams.
-TOP_ALT = "Hi, I'm Boaz. High school student, electronics and physics. " + INTRO
-MID_ALT = ("1 Features: Windows tools, Android apps, firmware, self-hosting, and physics and math. "
-           "2 " + BLOCK_ALT + " 3 " + PINOUT_ALT + " 4 Featured:")
+TOP_ALT = "Hi, I'm Boaz. High school student, electronics and physics."
+MID_ALT = "1 " + BLOCK_ALT + " 2 " + PINOUT_ALT + " 3 Featured:"
 BOTTOM_ALT = "End of datasheet."
 
-save("top.svg", svg(W, 400, header_body() + f'<g transform="translate(0 316)">{intro_body()}</g>', TOP_ALT, "top"))
+save("top.svg", svg(W, 340, header_body(), TOP_ALT, "top"))
 save("portfolio.svg", connector())
-mid = (section_body("1", "FEATURES", "// what it does", features_body())
-       + f'<g transform="translate(0 210)">{section_body("2", "BLOCK DIAGRAM", "// signal flow", block_body())}</g>'
-       + f'<g transform="translate(0 510)">{section_body("3", "PIN CONFIGURATION", "// what I speak, where it runs", pinout_body())}</g>'
-       + f'<g transform="translate(0 840)">{head("4", "FEATURED", "// live from GitHub")}</g>')
-save("mid.svg", svg(W, 900, mid, MID_ALT))
+mid = (section_body("1", "BLOCK DIAGRAM", "// signal flow", block_body())
+       + f'<g transform="translate(0 306)">{section_body("2", "PIN CONFIGURATION", "// what I write", pinout_body())}</g>'
+       + f'<g transform="translate(0 530)">{head("3", "FEATURED", "// live from GitHub")}</g>')
+save("mid.svg", svg(W, 600, mid, MID_ALT))
 save("bottom.svg", svg(W, 80, footer_body(), BOTTOM_ALT, "bottom"))
 chips = []
 for i, feat in enumerate(featured):

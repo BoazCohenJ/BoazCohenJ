@@ -47,8 +47,13 @@ def esc(s):
     return escape(s, {'"': "&quot;"})
 
 
+HATCH = (f'<pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">'
+         f'<line x1="0" y1="0" x2="0" y2="6" stroke="{COPPER}" stroke-width="1.5" opacity=".55"/></pattern>')
+
+
 DEFS = f"""<defs>
 <pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1.1" fill="#2a7a62" opacity=".45"/></pattern>
+{HATCH}
 <filter id="glow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 </defs>"""
 
@@ -205,6 +210,7 @@ def header_body():
 
     b.append(f'<text x="72" y="314" font-family="{MONO}" font-size="10" fill="{SILK}" opacity=".55">'
              f'DATASHEET BC-2026 · BOAZ COHEN · REV 2026 · 2-LAYER · HAND-ROUTED</text>')
+    b.append(header_extras())
     return "".join(b)
 
 
@@ -218,16 +224,217 @@ def connector():
     b.append(f'<text x="40" y="11" font-family="{MONO}" font-size="10" fill="{COPPER}">J1</text>')
     b.append(f'<text x="214" y="34" font-family="{MONO}" font-size="11" letter-spacing="2" fill="{DIM}">PORTFOLIO</text>')
     b.append(f'<text x="214" y="62" font-family="{SANS}" font-size="27" font-weight="700" fill="{SILK}">boazcohen.dev ↗</text>')
-    d = "M520,40 H850 l14,14 H890"
+    parts, d = chain(520, 850, 40, [("meander",), ("r", "R2", "103"), ("tp", "TP5")])
+    d += " l14,14 H890"
     b.append(trace(d))
+    b.append(parts)
     b.append(pad(890, 54, 4.5))
     b.append(pulse(d, 3.2, 0.3))
     b.append(led(500, 40, CYAN, 0, 1.3, 4))
     return svg(W, 80, "".join(b), "Portfolio: boazcohen.dev")
 
 
+# --------------------------------------------------------------------------- components, gates and etched details
+DARK = "#0f1317"
+def silk(x, y, s, size=8.5, anchor="middle", op=".7"):
+    return (f'<text x="{x:.1f}" y="{y:.1f}" text-anchor="{anchor}" font-family="{MONO}" font-size="{size}" '
+            f'fill="{SILK}" opacity="{op}">{esc(s)}</text>')
+
+
+def smd_r(cx, cy, ref, val, w=34, h=16):
+    """Chip resistor: copper pads at both ends, dark body with its value code."""
+    pw = 8
+    return (f'<rect x="{cx - w / 2}" y="{cy - h / 2}" width="{pw}" height="{h}" fill="{COPPER}"/>'
+            f'<rect x="{cx + w / 2 - pw}" y="{cy - h / 2}" width="{pw}" height="{h}" fill="{COPPER}"/>'
+            f'<rect x="{cx - w / 2 + pw - 2}" y="{cy - h / 2 + 1.5}" width="{w - 2 * pw + 4}" height="{h - 3}" rx="1.5" '
+            f'fill="#181c20" stroke="#2c363d"/>'
+            f'<text x="{cx}" y="{cy + 3}" text-anchor="middle" font-family="{MONO}" font-size="8" fill="#9aa5ab">{val}</text>'
+            + silk(cx, cy - h / 2 - 4, ref))
+
+
+def smd_c(cx, cy, ref, val="104", w=26, h=16):
+    """Ceramic capacitor: tan body, light end caps."""
+    return (f'<rect x="{cx - w / 2}" y="{cy - h / 2}" width="{w}" height="{h}" rx="3" fill="#c9a24b"/>'
+            f'<rect x="{cx - w / 2}" y="{cy - h / 2}" width="5" height="{h}" rx="2" fill="#e3dccb"/>'
+            f'<rect x="{cx + w / 2 - 5}" y="{cy - h / 2}" width="5" height="{h}" rx="2" fill="#e3dccb"/>'
+            f'<text x="{cx}" y="{cy + 3}" text-anchor="middle" font-family="{MONO}" font-size="8" fill="#5a4313">{val}</text>'
+            + silk(cx, cy - h / 2 - 4, ref))
+
+
+def smd_l(cx, cy, ref, w=44, h=18):
+    """Inductor: dark body with a gold coil on top."""
+    pw = 8
+    x0 = cx - 13
+    coil = f"M{x0},{cy + 3} " + " ".join("q3.25,-10 6.5,0" for _ in range(4))
+    return (f'<rect x="{cx - w / 2}" y="{cy - h / 2}" width="{pw}" height="{h}" fill="{COPPER}"/>'
+            f'<rect x="{cx + w / 2 - pw}" y="{cy - h / 2}" width="{pw}" height="{h}" fill="{COPPER}"/>'
+            f'<rect x="{cx - w / 2 + pw - 2}" y="{cy - h / 2 + 1.5}" width="{w - 2 * pw + 4}" height="{h - 3}" rx="3" '
+            f'fill="#181c20" stroke="#2c363d"/>'
+            f'<path d="{coil}" fill="none" stroke="#c9a24b" stroke-width="1.8" stroke-linecap="round"/>'
+            + silk(cx, cy - h / 2 - 4, ref))
+
+
+def smd_d(cx, cy, ref, w=34, h=16):
+    """Diode: dark body, light cathode band on the right."""
+    pw = 8
+    return (f'<rect x="{cx - w / 2}" y="{cy - h / 2}" width="{pw}" height="{h}" fill="{COPPER}"/>'
+            f'<rect x="{cx + w / 2 - pw}" y="{cy - h / 2}" width="{pw}" height="{h}" fill="{COPPER}"/>'
+            f'<rect x="{cx - w / 2 + pw - 2}" y="{cy - h / 2 + 1.5}" width="{w - 2 * pw + 4}" height="{h - 3}" rx="1.5" '
+            f'fill="#181c20" stroke="#2c363d"/>'
+            f'<rect x="{cx + w / 2 - pw - 6}" y="{cy - h / 2 + 1.5}" width="4" height="{h - 3}" fill="#cfd6db"/>'
+            + silk(cx, cy - h / 2 - 4, ref))
+
+
+def smd_led(cx, cy, color, w=26, h=12):
+    """Indicator LED (always on): coloured lens between two copper pads."""
+    pw = 6
+    return (f'<rect x="{cx - w / 2}" y="{cy - h / 2 - 1}" width="{pw}" height="{h + 2}" fill="{COPPER}"/>'
+            f'<rect x="{cx + w / 2 - pw}" y="{cy - h / 2 - 1}" width="{pw}" height="{h + 2}" fill="{COPPER}"/>'
+            f'<rect x="{cx - w / 2 + pw - 1}" y="{cy - h / 2}" width="{w - 2 * pw + 2}" height="{h}" rx="3" '
+            f'fill="{color}" opacity=".9" filter="url(#glow)"/>'
+            f'<rect x="{cx - w / 2 + pw + 1}" y="{cy - h / 2 + 2}" width="{w - 2 * pw - 2}" height="2.5" rx="1.2" fill="#fff" opacity=".55"/>')
+
+
+def tp(cx, cy, ref):
+    """Test point: copper pad with a silk ring and label."""
+    return (pad(cx, cy, 4.5) + f'<circle cx="{cx}" cy="{cy}" r="8" fill="none" stroke="{SILK}" stroke-opacity=".4" stroke-width="1"/>'
+            + silk(cx, cy + 19, ref, 8))
+
+
+def gate(kind, cx, cy, ref, pads=(True, True, True)):
+    """Logic gate symbol centred on (cx, cy): copper leads, silk outline. kind: and nand or nor xor not."""
+    inv = kind in ("nand", "nor", "not")
+    ins = [cy] if kind == "not" else [cy - 7, cy + 7]
+    tip = cx + (10 if kind == "not" else 13)
+    out_x = tip + (7 if inv else 0)
+    b = [trace(f"M{cx - 26},{y} H{cx - 8}", 2.5) for y in ins]
+    b.append(trace(f"M{out_x},{cy} H{cx + 26}", 2.5))
+    st = f'fill="{DARK}" stroke="{SILK}" stroke-width="1.6" stroke-linejoin="round"'
+    if kind in ("and", "nand"):
+        b.append(f'<path d="M{cx - 15},{cy - 13} H{cx} A13,13 0 0 1 {cx},{cy + 13} H{cx - 15} Z" {st}/>')
+    elif kind == "not":
+        b.append(f'<path d="M{cx - 12},{cy - 11} L{tip},{cy} L{cx - 12},{cy + 11} Z" {st}/>')
+    else:
+        b.append(f'<path d="M{cx - 15},{cy - 13} C{cx - 2},{cy - 13} {cx + 8},{cy - 8} {tip},{cy} '
+                 f'C{cx + 8},{cy + 8} {cx - 2},{cy + 13} {cx - 15},{cy + 13} C{cx - 9},{cy + 5} {cx - 9},{cy - 5} {cx - 15},{cy - 13} Z" {st}/>')
+    if kind == "xor":
+        b.append(f'<path d="M{cx - 20},{cy - 13} C{cx - 14},{cy - 5} {cx - 14},{cy + 5} {cx - 20},{cy + 13}" '
+                 f'fill="none" stroke="{SILK}" stroke-width="1.6" stroke-linecap="round"/>')
+    if inv:
+        b.append(f'<circle cx="{tip + 3.5}" cy="{cy}" r="3.5" {st}/>')
+    if pads[0]:
+        b += [pad(cx - 26, y, 3.2) for y in ins]
+    if pads[2]:
+        b.append(pad(cx + 26, cy, 3.2))
+    b.append(silk(cx, cy + 26, ref, 8))
+    b.append(pulse(f"M{out_x},{cy} H{cx + 26}", 1.4, (cx * 0.013 + cy * 0.007) % 1.4, 2.2))
+    return "".join(b)
+
+
+def meander_d(x, y, w, a=9, p=10, s=6):
+    """Square-wave 'delay line' from (x, y) to (x + w, y), as path commands."""
+    n = int((w - 2 * s) // p)
+    d, cur, up = f" H{x + s:.1f}", x + s, True
+    for _ in range(n):
+        d += f" V{y - a if up else y + a:.1f} H{cur + p:.1f}"
+        cur, up = cur + p, not up
+    return d + f" V{y} H{x + w:.1f}"
+
+
+ITEMS = {"r": (34, smd_r), "c": (26, smd_c), "l": (44, smd_l), "d": (34, smd_d), "tp": (10, tp), "meander": (72, None)}
+
+
+def chain(x0, x1, y, items):
+    """A trace from x0 to x1 with components in series, spread evenly.
+    items: ("r", ref, value) | ("c", ref, value) | ("l", ref) | ("d", ref) | ("tp", ref) | ("meander",)
+    Returns (svg of the components, path d of the whole trace for the moving pulse)."""
+    gap = (x1 - x0 - sum(ITEMS[k][0] for k, *_ in items)) / (len(items) + 1)
+    x, d, parts = x0, f"M{x0},{y}", []
+    for k, *args in items:
+        x += gap
+        w, fn = ITEMS[k]
+        d += f" H{x:.1f}"
+        if k == "meander":
+            d += meander_d(x, y, w)
+        else:
+            d += f" H{x + w:.1f}"
+            parts.append(fn(x + w / 2, y, *args))
+        x += w
+    return "".join(parts), d + f" H{x1}"
+
+
+def qr_etch(x, y, m=2.6, n=9):
+    """A little QR-style etched label (the pattern is fixed, so the build stays reproducible)."""
+    b = [f'<rect x="{x - 3}" y="{y - 3}" width="{n * m + 6:.1f}" height="{n * m + 6:.1f}" rx="2" fill="#06160f" '
+         f'stroke="{COPPER}" stroke-opacity=".6"/>']
+    v = 7
+    for r in range(n):
+        for c in range(n):
+            v = (v * 1103515245 + 12345) & 0x7FFFFFFF
+            finder = (r < 3 and c < 3) or (r < 3 and c >= n - 3) or (r >= n - 3 and c < 3)
+            if finder or (v >> 16) & 1:
+                b.append(f'<rect x="{x + c * m:.1f}" y="{y + r * m:.1f}" width="{m}" height="{m}" fill="{COPPER}" opacity=".9"/>')
+    return "".join(b)
+
+
+def zone(x, y, w, h, label):
+    """Ground pour: hatched copper with a label."""
+    lw = len(label) * 6.4 + 12
+    return (f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="3" fill="url(#hatch)" stroke="{COPPER}" stroke-opacity=".6" stroke-width="1.2"/>'
+            f'<rect x="{x + (w - lw) / 2:.1f}" y="{y + h / 2 - 7}" width="{lw:.1f}" height="14" rx="3" fill="#06160f"/>'
+            f'<text x="{x + w / 2}" y="{y + h / 2 + 3.5}" text-anchor="middle" font-family="{MONO}" font-size="9.5" letter-spacing="1.5" fill="{SILK}" opacity=".8">{label}</text>')
+
+
+def via_row(x0, x1, y, step=20):
+    out, x = [], x0
+    while x <= x1:
+        out.append(f'<circle cx="{x}" cy="{y}" r="3.6" fill="none" stroke="{COPPER}" stroke-width="1.6" opacity=".8"/>'
+                   f'<circle cx="{x}" cy="{y}" r="1.2" fill="#06160f"/>')
+        x += step
+    return "".join(out)
+
+
+def marks(x, y):
+    """Silk marks: lead-free circle, CE, crossed-out bin."""
+    st = f'fill="none" stroke="{SILK}" stroke-opacity=".7" stroke-width="1.3" stroke-linecap="round"'
+    pb = (f'<circle cx="{x}" cy="{y}" r="8" {st}/>'
+          f'<text x="{x}" y="{y + 3}" text-anchor="middle" font-family="{MONO}" font-size="8.5" font-weight="700" fill="{SILK}" opacity=".7">Pb</text>'
+          f'<path d="M{x - 6},{y + 6} L{x + 6},{y - 6}" {st}/>')
+    ce = (f'<text x="{x + 30}" y="{y + 4}" text-anchor="middle" font-family="{SANS}" font-size="12" font-weight="700" '
+          f'fill="{SILK}" opacity=".7">CE</text>')
+    bx = x + 58
+    bin_ = (f'<path d="M{bx - 5},{y - 4} h10 l-1,10 h-8 Z M{bx - 7},{y - 6} h14 M{bx - 2},{y - 8} h4" {st}/>'
+            f'<path d="M{bx - 9},{y + 8} L{bx + 9},{y - 10} M{bx - 9},{y - 10} L{bx + 9},{y + 8}" {st}/>')
+    return pb + ce + bin_
+
+
+def header_extras():
+    """Top slice: a four-gate logic corner, a row of test points and an etched strip along the bottom."""
+    b = []
+    # logic corner: AND and NAND feed an OR and an XOR
+    cells = [("and", 716, 88, "U2A"), ("or", 790, 88, "U2B"), ("nand", 716, 148, "U3A"), ("xor", 790, 148, "U3B")]
+    for kind, cx, cy, ref in cells:
+        feeds = kind in ("and", "nand")
+        b.append(gate(kind, cx, cy, ref, pads=(True, True, not feeds)))
+    for cy in (88, 148):
+        d = f"M742,{cy} H748 L758,{cy - 7} H764"
+        b.append(trace(d, 2.5))
+        b.append(pulse(d, 1.6, 0.4 if cy == 88 else 1.0, 2.2))
+    # test points on one net
+    d = "M100,82 H250"
+    b.append(trace(d, 2, ".6"))
+    for k, x in enumerate((100, 150, 200, 250)):
+        b.append(tp(x, 82, f"TP{k + 1}"))
+    b.append(pulse(d, 3.0, 0.8, 2.5))
+    # etched strip: stitching vias, ground pour, QR label
+    b.append(via_row(560, 700, 322))
+    b.append(zone(720, 311, 100, 22, "GND"))
+    b.append(qr_etch(838, 308))
+    return "".join(b)
+
+
 # --------------------------------------------------------------------------- section heads (silkscreen label + trace to the rails)
-def head(title, sub):
+def head(title, sub, items=()):
     b = []
     tx = 44
     ex = tx + len(title) * 16.4 + 16
@@ -236,18 +443,23 @@ def head(title, sub):
     sx0 = ex + 14
     b.append(f'<text x="{sx0:.0f}" y="40" font-family="{MONO}" font-size="14" fill="{DIM}">{esc(sub)}</text>')
     sx = min(sx0 + len(sub) * 8.4 + 14, 770)
-    d1 = f"M{sx:.0f},32 H850 l14,14 H890"
     d0 = "M10,32 H26"
+    if items:
+        parts, d1 = chain(sx, 850, 32, items)
+        d1 += " l14,14 H890"
+    else:
+        parts, d1 = "", f"M{sx:.0f},32 H850 l14,14 H890"
     b.append(trace(d0))
     b.append(trace(d1))
+    b.append(parts)
     b.append(pad(10, 32, 4))
     b.append(pad(890, 46, 4.5))
     b.append(pulse(d1, 3.4, 0.2))
     return "".join(b)
 
 
-def section_body(title, sub, body):
-    return head(title, sub) + f'<g transform="translate(0 60)">{body}</g>'
+def section_body(title, sub, body, items=()):
+    return head(title, sub, items) + f'<g transform="translate(0 60)">{body}</g>'
 
 
 # --------------------------------------------------------------------------- pin configuration
@@ -272,6 +484,16 @@ def pinout_body():
         b.append(f'<text x="{bx1 - 8}" y="{y + 4}" text-anchor="end" font-family="{MONO}" font-size="11" fill="{DIM}">{6 - i}</text>')
         b.append(pulse(f"M336,{y} H{bx0}", 1.6, 0.35 * i, 2.5))
         b.append(pulse(f"M{bx1},{y} H564", 1.6, 0.35 * i + 0.9, 2.5))
+        b.append(trace(f"M10,{y} H100", 2.5))
+        b.append(pad(10, y, 3.5))
+        b.append(smd_r(66, y, f"R{i + 3}", ("102", "472", "221")[i]))
+        b.append(f'<rect x="96" y="{y - 4}" width="10" height="8" fill="{COPPER}"/>')
+        b.append(pulse(f"M10,{y} H100", 2.4, 0.5 * i, 2.5))
+        b.append(trace(f"M804,{y} H890", 2.5))
+        b.append(pad(890, y, 3.5))
+        b.append(smd_led(846, y, ("#ff4d4d", "#ffb547", CYAN)[i]))
+        b.append(f'<rect x="794" y="{y - 4}" width="10" height="8" fill="{COPPER}"/>')
+        b.append(pulse(f"M804,{y} H890", 2.4, 0.5 * i + 0.8, 2.5))
         n, sub = left[i]
         b.append(f'<rect x="106" y="{y - 13}" width="230" height="26" rx="6" fill="{CHIP}" stroke="{CHIP_EDGE}" stroke-width="2"/>'
                  f'<text x="120" y="{y + 5}" font-family="{SANS}" font-size="14" font-weight="700" fill="{SILK}">{esc(n)}</text>'
@@ -474,13 +696,16 @@ def footer_body():
     b = []
     for x, y in [(30, 50), (870, 50)]:
         b.append(hole(x, y))
-    d1, d2 = "M66,40 H220", "M680,40 H834"
+    parts1, d1 = chain(66, 220, 40, [("r", "R8", "221")])
+    parts2, d2 = chain(680, 834, 40, [("d", "D5")])
     b.append(trace(d1, 2, ".7"))
     b.append(trace(d2, 2, ".7"))
+    b.append(parts1 + parts2)
+    b.append(marks(700, 66))
     b.append(pad(66, 40, 4))
     b.append(pad(834, 40, 4))
     b.append(pulse(d1, 3, 0.2, 2.5))
-    b.append(pulse("M834,40 H680", 3.4, 1.0, 2.5))
+    b.append(pulse(d2, 3.4, 1.0, 2.5))
     b.append(f'<text x="450" y="45" text-anchor="middle" font-family="{MONO}" font-size="13" letter-spacing="2" fill="{DIM}">END OF DATASHEET · BC-2026 · PIN 7: NC</text>')
     b.append(f'<text x="450" y="64" text-anchor="middle" font-family="{MONO}" font-size="9" letter-spacing="1.5" fill="{SILK}" opacity=".45">FAB: HAND-ROUTED · FINISH: ENIG · 1.6 MM</text>')
     return "".join(b)
@@ -499,8 +724,8 @@ BOTTOM_ALT = "End of datasheet."
 
 save("top.svg", svg(W, 340, header_body(), TOP_ALT, "top"))
 save("portfolio.svg", connector())
-mid = (section_body("PIN CONFIGURATION", "// what I write", pinout_body())
-       + f'<g transform="translate(0 226)">{head("FEATURED", "// live from GitHub")}</g>')
+mid = (section_body("PIN CONFIGURATION", "// what I write", pinout_body(), [("r", "R6", "331"), ("l", "L1"), ("tp", "TP6")])
+       + f'<g transform="translate(0 226)">{head("FEATURED", "// live from GitHub", [("meander",), ("c", "C2"), ("r", "R7", "681"), ("tp", "TP7")])}</g>')
 save("mid.svg", svg(W, 300, mid, MID_ALT))
 save("bottom.svg", svg(W, 80, footer_body(), BOTTOM_ALT, "bottom"))
 chips = []

@@ -279,7 +279,7 @@ FEATURES = [
 def features_body():
     b = []
     for i, (bold, rest) in enumerate(FEATURES):
-        y = 18 + 36 * i
+        y = 14 + 28 * i
         d = f"M10,{y} H48"
         b.append(trace(d, 3))
         b.append(pad(10, y, 4))
@@ -294,9 +294,9 @@ def features_body():
 # --------------------------------------------------------------------------- 2 block diagram
 def box(x, y, w, h, title, sub, ref, n):
     return (f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="6" fill="{CHIP}" stroke="{CHIP_EDGE}" stroke-width="2"/>'
-            f'<text x="{x + 10}" y="{y + 15}" font-family="{MONO}" font-size="9.5" fill="{COPPER}">{ref}</text>'
-            f'<text x="{x + 12}" y="{y + 36}" font-family="{SANS}" font-size="15" font-weight="700" fill="{SILK}">{esc(title)}</text>'
-            f'<text x="{x + w - 10}" y="{y + 15}" text-anchor="end" font-family="{MONO}" font-size="10" fill="{DIM}">{esc(sub)}</text>'
+            f'<text x="{x + 10}" y="{y + 13}" font-family="{MONO}" font-size="9.5" fill="{COPPER}">{ref}</text>'
+            f'<text x="{x + 12}" y="{y + h - 12}" font-family="{SANS}" font-size="15" font-weight="700" fill="{SILK}">{esc(title)}</text>'
+            f'<text x="{x + w - 10}" y="{y + 13}" text-anchor="end" font-family="{MONO}" font-size="10" fill="{DIM}">{esc(sub)}</text>'
             + led(x + w - 12, y + h - 12, CYAN if n % 2 else "#fbbf24", (n * 0.37) % 1.5, 1.2 + (n % 3) * 0.3, 3))
 
 
@@ -305,8 +305,8 @@ def block_body():
     ins = [("PHYSICS", "F = m·a"), ("MATH", "∫ f(x) dx"), ("ELECTRONICS", "V = I·R")]
     outs = [("WINDOWS TOOLS", "C# · .NET"), ("ANDROID APPS", "React Native"),
             ("FIRMWARE", "ESP32 · Arduino"), ("SELF-HOSTING", "Docker")]
-    in_y = [60, 150, 240]
-    out_y = [48, 114, 180, 246]
+    in_y = [38, 102, 166]
+    out_y = [30, 78, 126, 174]
     cx0, cx1 = 330, 570
     for i, y in enumerate(in_y):
         d = f"M200,{y} H{cx0 - 6}"
@@ -322,18 +322,18 @@ def block_body():
         b.append(f'<rect x="{cx0 - 12}" y="{y - 3}" width="12" height="6" fill="{COPPER}"/>')
     for y in out_y:
         b.append(f'<rect x="{cx1}" y="{y - 3}" width="12" height="6" fill="{COPPER}"/>')
-    b.append(f'<rect x="{cx0}" y="24" width="{cx1 - cx0}" height="252" rx="8" fill="#0f1317" stroke="#2c363d" stroke-width="2"/>')
-    b.append(f'<circle cx="{cx0 + 16}" cy="40" r="3.5" fill="#3a444c"/>')
+    b.append(f'<rect x="{cx0}" y="8" width="{cx1 - cx0}" height="188" rx="8" fill="#0f1317" stroke="#2c363d" stroke-width="2"/>')
+    b.append(f'<circle cx="{cx0 + 16}" cy="24" r="3.5" fill="#3a444c"/>')
     mid = (cx0 + cx1) // 2
-    b.append(f'<text x="{mid}" y="146" text-anchor="middle" font-family="{SANS}" font-size="44" font-weight="700" fill="{SILK}">BOAZ</text>')
-    b.append(f'<text x="{mid}" y="172" text-anchor="middle" font-family="{MONO}" font-size="13" fill="{DIM}">BC-2026 · CORE</text>')
-    b.append(f'<text x="{mid}" y="192" text-anchor="middle" font-family="{MONO}" font-size="10" fill="{DIM}">curiosity in, working things out</text>')
-    b.append(led(cx1 - 18, 40, CYAN, 0.2, 1.1, 4))
+    b.append(f'<text x="{mid}" y="108" text-anchor="middle" font-family="{SANS}" font-size="44" font-weight="700" fill="{SILK}">BOAZ</text>')
+    b.append(f'<text x="{mid}" y="130" text-anchor="middle" font-family="{MONO}" font-size="13" fill="{DIM}">BC-2026 · CORE</text>')
+    b.append(f'<text x="{mid}" y="148" text-anchor="middle" font-family="{MONO}" font-size="10" fill="{DIM}">curiosity in, working things out</text>')
+    b.append(led(cx1 - 18, 24, CYAN, 0.2, 1.1, 4))
     for i, (t, sub) in enumerate(ins):
-        b.append(box(34, in_y[i] - 28, 166, 56, t, sub, f"IN{i + 1}", i))
+        b.append(box(34, in_y[i] - 22, 166, 44, t, sub, f"IN{i + 1}", i))
     for i, (t, sub) in enumerate(outs):
-        b.append(box(690, out_y[i] - 26, 176, 52, t, sub, f"OUT{i + 1}", i + 3))
-    b.append(f'<text x="34" y="294" font-family="{MONO}" font-size="10" fill="{SILK}" opacity=".55">FIG. 1 · SIGNAL FLOW</text>')
+        b.append(box(690, out_y[i] - 21, 176, 42, t, sub, f"OUT{i + 1}", i + 3))
+    b.append(f'<text x="34" y="216" font-family="{MONO}" font-size="10" fill="{SILK}" opacity=".55">FIG. 1 · SIGNAL FLOW</text>')
     return "".join(b)
 
 
@@ -347,13 +347,13 @@ def pinout_body():
             ("Python", "scripts"), ("React Native", "Expo · mobile"), ("Arduino C++", "firmware")]
     right = [("WINDOWS", "tray tools"), ("ANDROID", "phone apps"), ("WEB", "static sites"),
              ("ESP32", "microcontroller"), ("LINUX", "self-hosting"), ("DOCKER", "containers")]
-    ys = [52 + 44 * i for i in range(6)]
+    ys = [28 + 34 * i for i in range(6)]
     bx0, bx1 = 370, 530
-    b.append(f'<rect x="{bx0}" y="24" width="{bx1 - bx0}" height="276" rx="8" fill="#0f1317" stroke="#2c363d" stroke-width="2"/>')
-    b.append(f'<path d="M{(bx0 + bx1) // 2 - 14},24 a14,14 0 0 0 28,0" fill="{BOARD}" stroke="#2c363d" stroke-width="2"/>')
-    b.append(f'<circle cx="{bx0 + 16}" cy="{ys[0] - 14}" r="3.5" fill="#3a444c"/>')
-    b.append(f'<text x="438" y="162" text-anchor="middle" transform="rotate(-90 438 162)" font-family="{SANS}" font-size="30" font-weight="700" fill="{SILK}">BC-2026</text>')
-    b.append(f'<text x="466" y="162" text-anchor="middle" transform="rotate(-90 466 162)" font-family="{MONO}" font-size="11" fill="{DIM}">BOAZ COHEN · TOP VIEW</text>')
+    b.append(f'<rect x="{bx0}" y="6" width="{bx1 - bx0}" height="{ys[-1] + 22 - 6}" rx="8" fill="#0f1317" stroke="#2c363d" stroke-width="2"/>')
+    b.append(f'<path d="M{(bx0 + bx1) // 2 - 14},6 a14,14 0 0 0 28,0" fill="{BOARD}" stroke="#2c363d" stroke-width="2"/>')
+    b.append(f'<circle cx="{bx0 + 16}" cy="{ys[0] - 10}" r="3.5" fill="#3a444c"/>')
+    b.append(f'<text x="438" y="113" text-anchor="middle" transform="rotate(-90 438 113)" font-family="{SANS}" font-size="30" font-weight="700" fill="{SILK}">BC-2026</text>')
+    b.append(f'<text x="466" y="113" text-anchor="middle" transform="rotate(-90 466 113)" font-family="{MONO}" font-size="11" fill="{DIM}">BOAZ COHEN · TOP VIEW</text>')
     for i, y in enumerate(ys):
         b.append(trace(f"M336,{y} H{bx0 - 20}", 3))
         b.append(trace(f"M{bx1 + 20},{y} H564", 3))
@@ -364,14 +364,14 @@ def pinout_body():
         b.append(pulse(f"M336,{y} H{bx0}", 1.6, 0.35 * i, 2.5))
         b.append(pulse(f"M{bx1},{y} H564", 1.6, 0.35 * i + 0.9, 2.5))
         n, sub = left[i]
-        b.append(f'<rect x="106" y="{y - 15}" width="230" height="30" rx="6" fill="{CHIP}" stroke="{CHIP_EDGE}" stroke-width="2"/>'
+        b.append(f'<rect x="106" y="{y - 13}" width="230" height="26" rx="6" fill="{CHIP}" stroke="{CHIP_EDGE}" stroke-width="2"/>'
                  f'<text x="120" y="{y + 5}" font-family="{SANS}" font-size="14" font-weight="700" fill="{SILK}">{esc(n)}</text>'
                  f'<text x="324" y="{y + 4}" text-anchor="end" font-family="{MONO}" font-size="10" fill="{DIM}">{esc(sub)}</text>')
         n, sub = right[i]
-        b.append(f'<rect x="564" y="{y - 15}" width="230" height="30" rx="6" fill="{CHIP}" stroke="{CHIP_EDGE}" stroke-width="2"/>'
+        b.append(f'<rect x="564" y="{y - 13}" width="230" height="26" rx="6" fill="{CHIP}" stroke="{CHIP_EDGE}" stroke-width="2"/>'
                  f'<text x="578" y="{y + 5}" font-family="{SANS}" font-size="14" font-weight="700" fill="{SILK}">{esc(n)}</text>'
                  f'<text x="782" y="{y + 4}" text-anchor="end" font-family="{MONO}" font-size="10" fill="{DIM}">{esc(sub)}</text>')
-    b.append(f'<text x="106" y="324" font-family="{MONO}" font-size="10" fill="{SILK}" opacity=".55">FIG. 2 · PIN CONFIGURATION · LEFT: LANGUAGES (IN) · RIGHT: TARGETS (OUT)</text>')
+    b.append(f'<text x="106" y="242" font-family="{MONO}" font-size="10" fill="{SILK}" opacity=".55">FIG. 2 · PIN CONFIGURATION · LEFT: LANGUAGES (IN) · RIGHT: TARGETS (OUT)</text>')
     return "".join(b)
 
 
@@ -419,14 +419,14 @@ def fetch_featured():
         sys.exit(f"build.py: unexpected GitHub response ({e!r})")
 
 
-CHIP_W, CHIP_H = 450, 340
-BY, BH, BW = 36, 268, 372          # package body: top, height, width
-DIG_W, DIG_H, DIG_PITCH = 20, 36, 28
+CHIP_W, CHIP_H = 450, 240
+BY, BH, BW = 30, 180, 372          # package body: top, height, width
+DIG_W, DIG_H, DIG_PITCH = 14, 24, 20
 SEGS = {"0": "abcdef", "1": "bc", "2": "abged", "3": "abgcd", "4": "fgbc",
         "5": "afgcd", "6": "afgedc", "7": "abc", "8": "abcdefg", "9": "abcdfg"}
 
 
-def seven_segment(x, y, t=4.2, w=DIG_W, h=DIG_H):
+def seven_segment(x, y, t=3.4, w=DIG_W, h=DIG_H):
     """The seven segment polygons of one digit whose top-left corner is (x, y): {letter: 'x,y x,y ...'}."""
     g, c = 1.0, t / 2
     xl, xr, ym = x + c + g, x + w - c - g, y + h / 2
@@ -443,7 +443,7 @@ def seven_segment(x, y, t=4.2, w=DIG_W, h=DIG_H):
     return {k: " ".join(f"{px:.1f},{py:.1f}" for px, py in v) for k, v in segs.items()}
 
 
-def star_points(cx, cy, ro=8.0, ri=3.4):
+def star_points(cx, cy, ro=5.5, ri=2.4):
     pts = []
     for k in range(10):
         a = math.pi / 2 + k * math.pi / 5
@@ -452,31 +452,34 @@ def star_points(cx, cy, ro=8.0, ri=3.4):
     return " ".join(pts)
 
 
-def readout(x, y, w, h, f):
-    """Seven-segment display window: lit digits over dim ghost 8s, with an icon and unit on the left."""
+def readout(xr, y, f):
+    """Seven-segment display window whose right edge is xr: lit digits over dim ghost 8s,
+    with a small icon and the unit centred underneath."""
     s, col = str(f["value"]), f["color"]
     n = max(4, len(s))
     dw = n * DIG_PITCH - (DIG_PITCH - DIG_W)
-    dx, dy = x + w - 16 - dw, y + (h - DIG_H) / 2
+    w, h = dw + 24, 50
+    x = xr - w
     ghost, lit = [], []
     for slot in range(n):
-        px = dx + slot * DIG_PITCH
-        segs = seven_segment(px, dy)
+        segs = seven_segment(x + 12 + slot * DIG_PITCH, y + 7)
         ghost += [f'<polygon points="{p}"/>' for p in segs.values()]
         k = slot - (n - len(s))
         if k >= 0:
             lit += [f'<polygon points="{segs[letter]}"/>' for letter in SEGS[s[k]]]
-    ix, iy = x + 26, y + h / 2
+    unit = f["unit"]
+    iw, tw = 11, len(unit) * 6.6
+    lx, ly = x + (w - (iw + 5 + tw)) / 2, y + h - 7
     if f["stat"] == "stars":
-        icon = f'<polygon points="{star_points(ix, iy)}" fill="{col}" filter="url(#glow)"/>'
+        icon = f'<polygon points="{star_points(lx + iw / 2, ly - 3.2)}" fill="{col}"/>'
     else:
-        icon = (f'<path d="M{ix - 12},{iy} H{ix + 12}" stroke="{col}" stroke-width="2.5" stroke-linecap="round"/>'
-                f'<circle cx="{ix}" cy="{iy}" r="5" fill="#05110c" stroke="{col}" stroke-width="2.5"/>')
+        icon = (f'<path d="M{lx:.1f},{ly - 3} H{lx + iw:.1f}" stroke="{col}" stroke-width="1.6" stroke-linecap="round"/>'
+                f'<circle cx="{lx + iw / 2:.1f}" cy="{ly - 3}" r="2.6" fill="#05110c" stroke="{col}" stroke-width="1.6"/>')
     return (f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="6" fill="#05110c" stroke="#1f2c33" stroke-width="2"/>'
             f'<g fill="{col}" opacity=".1">{"".join(ghost)}</g>'
             f'<g fill="{col}" filter="url(#glow)">{"".join(lit)}</g>'
-            f'{icon}<text x="{ix + 22}" y="{iy + 4}" font-family="{MONO}" font-size="12" letter-spacing="2" '
-            f'fill="{DIM}">{esc(f["unit"])}</text>')
+            f'{icon}<text x="{lx + iw + 5:.1f}" y="{ly}" font-family="{MONO}" font-size="8.5" letter-spacing="1.4" '
+            f'fill="{DIM}">{esc(unit)}</text>')
 
 
 def chip(i, f):
@@ -487,11 +490,12 @@ def chip(i, f):
     bx0 = 40 if left else 38
     bx1 = bx0 + BW
     col = f["color"]
+    py = lambda k: BY + 14 + 20 * k            # y of the k-th side pin
     b = [trace(f"M{10 if left else CHIP_W - 10},0 V{CHIP_H}")]
 
     # stubs from the board rail to two of the outer pins
-    for k in (2, 8):
-        y = BY + 20 + 20 * k
+    for k in (1, 6):
+        y = py(k)
         d = f"M10,{y} H{bx0 - 12}" if left else f"M{bx1 + 12},{y} H{CHIP_W - 10}"
         b.append(trace(d, 2.5))
         b.append(pad(10 if left else CHIP_W - 10, y, 3.5))
@@ -499,8 +503,8 @@ def chip(i, f):
 
     # traces that cross the seam to the other chip; each pulse is handed over at the seam
     dur = 2.0
-    for n, k in enumerate((3, 5, 7)):
-        y = BY + 20 + 20 * k
+    for n, k in enumerate((2, 4, 6)):
+        y = py(k)
         t0 = 0.3 * n
         right_way = n % 2 == 0                 # True: left chip -> right chip
         if left:
@@ -515,8 +519,8 @@ def chip(i, f):
             b.append(pulse(p, dur, t0 + dur if right_way else t0, 2.5))
 
     # pins on all four sides
-    for k in range(12):
-        y = BY + 20 + 20 * k
+    for k in range(8):
+        y = py(k)
         b.append(f'<rect x="{bx0 - 12}" y="{y - 4}" width="12" height="8" fill="{COPPER}"/>'
                  f'<rect x="{bx1}" y="{y - 4}" width="12" height="8" fill="{COPPER}"/>')
     for k in range(15):
@@ -530,26 +534,28 @@ def chip(i, f):
              f'V{BY + 20} Z" fill="{CHIP}" stroke="{CHIP_EDGE}" stroke-width="2"/>')
     b.append(f'<rect x="{bx0 + 7}" y="{BY + 7}" width="{BW - 14}" height="{BH - 14}" rx="4" fill="none" '
              f'stroke="#1a2329" stroke-width="1.5"/>')
-    b.append(f'<circle cx="{bx0 + 32}" cy="{BY + 26}" r="4" fill="#3b4a53"/>')
-    b.append(f'<text x="{bx0 + 46}" y="{BY + 30}" font-family="{MONO}" font-size="11.5" letter-spacing="2.2" '
+    b.append(f'<circle cx="{bx0 + 32}" cy="{BY + 22}" r="4" fill="#3b4a53"/>')
+    b.append(f'<text x="{bx0 + 46}" y="{BY + 26}" font-family="{MONO}" font-size="11.5" letter-spacing="2.2" '
              f'fill="{col}">{esc(f["role"])}</text>')
-    b.append(f'<text x="{bx1 - 16}" y="{BY + 30}" text-anchor="end" font-family="{MONO}" font-size="11" '
+    b.append(f'<text x="{bx1 - 16}" y="{BY + 26}" text-anchor="end" font-family="{MONO}" font-size="11" '
              f'fill="{COPPER}">github ↗</text>')
-    b.append(f'<line x1="{bx0 + 16}" y1="{BY + 42}" x2="{bx1 - 16}" y2="{BY + 42}" stroke="{CHIP_EDGE}"/>')
+    b.append(f'<line x1="{bx0 + 16}" y1="{BY + 34}" x2="{bx1 - 16}" y2="{BY + 34}" stroke="{CHIP_EDGE}"/>')
 
+    # name on the left, readout on the right of the same row
     name = f["repo"]
-    fs = min(30, int(340 / (len(name) * 0.6)))
-    b.append(f'<text x="{bx0 + 16}" y="{BY + 76}" font-family="{SANS}" font-size="{fs}" font-weight="700" '
+    fs = min(28, int(230 / (len(name) * 0.6)))
+    b.append(f'<text x="{bx0 + 16}" y="{BY + 74}" font-family="{SANS}" font-size="{fs}" font-weight="700" '
              f'fill="{SILK}">{esc(name)}</text>')
-    lines = textwrap.wrap(f["desc"], 42)
-    if len(lines) > 5:
-        lines = lines[:5]
-        lines[4] = lines[4][:39].rstrip(" ,.;:") + "…"
+    b.append(readout(bx1 - 16, BY + 42, f))
+
+    lines = textwrap.wrap(f["desc"], 46)
+    if len(lines) > 4:
+        lines = lines[:4]
+        lines[3] = lines[3][:43].rstrip(" ,.;:") + "…"
     for k, line in enumerate(lines):
-        b.append(f'<text x="{bx0 + 16}" y="{BY + 104 + k * 18}" font-family="{MONO}" font-size="12.5" '
+        b.append(f'<text x="{bx0 + 16}" y="{BY + 116 + k * 16}" font-family="{MONO}" font-size="12" '
                  f'fill="#b4d4c7">{esc(line)}</text>')
 
-    b.append(readout(bx0 + 16, BY + BH - 16 - 60, BW - 32, 60, f))
     alt = (f'{f["role"].capitalize()}: {name}. {f["desc"]} '
            f'{f["value"]} {f["unit"].lower()}.')
     return svg(CHIP_W, CHIP_H, "".join(b), alt, rails=False), alt
@@ -584,13 +590,13 @@ MID_ALT = ("1 Features: Windows tools, Android apps, firmware, self-hosting, and
            "2 " + BLOCK_ALT + " 3 " + PINOUT_ALT + " 4 Featured:")
 BOTTOM_ALT = "End of datasheet."
 
-save("top.svg", svg(W, 420, header_body() + f'<g transform="translate(0 320)">{intro_body()}</g>', TOP_ALT, "top"))
+save("top.svg", svg(W, 400, header_body() + f'<g transform="translate(0 316)">{intro_body()}</g>', TOP_ALT, "top"))
 save("portfolio.svg", connector())
 mid = (section_body("1", "FEATURES", "// what it does", features_body())
-       + f'<g transform="translate(0 240)">{section_body("2", "BLOCK DIAGRAM", "// signal flow", block_body())}</g>'
-       + f'<g transform="translate(0 600)">{section_body("3", "PIN CONFIGURATION", "// what I speak, where it runs", pinout_body())}</g>'
-       + f'<g transform="translate(0 1000)">{head("4", "FEATURED", "// live from GitHub")}</g>')
-save("mid.svg", svg(W, 1060, mid, MID_ALT))
+       + f'<g transform="translate(0 210)">{section_body("2", "BLOCK DIAGRAM", "// signal flow", block_body())}</g>'
+       + f'<g transform="translate(0 510)">{section_body("3", "PIN CONFIGURATION", "// what I speak, where it runs", pinout_body())}</g>'
+       + f'<g transform="translate(0 840)">{head("4", "FEATURED", "// live from GitHub")}</g>')
+save("mid.svg", svg(W, 900, mid, MID_ALT))
 save("bottom.svg", svg(W, 80, footer_body(), BOTTOM_ALT, "bottom"))
 chips = []
 for i, feat in enumerate(featured):

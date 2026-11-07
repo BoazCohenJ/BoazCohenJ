@@ -1,0 +1,43 @@
+name: Update profile
+
+# Rebuilds the README from GitHub data (repo name, about, stars, commits) and commits it if it changed.
+# GitHub has no event for "another repo of mine changed", so this polls. Press "Run workflow" for an instant refresh.
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - build.py
+      - .github/workflows/update-profile.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-profile
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build README and SVGs
+        run: python3 build.py
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Commit if anything changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A README.md assets
+          if git diff --cached --quiet; then
+            echo "Nothing changed."
+          else
+            git commit -m "Update featured repos"
+            git push
+          fi
